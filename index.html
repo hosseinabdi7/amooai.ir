@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>آموزش هوش مصنوعی برای کودکان</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn&display=swap');
+    body {
+      font-family: 'Vazirmatn', sans-serif;
+    }
+  </style>
+</head>
+<script>
+  const backendUrl = "http://localhost:5000"; // Updated to match your API's address
+
+  async function loadData() {
+    try {
+      // Load lessons
+      const lessonsResponse = await fetch(`${backendUrl}/api/lessons`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!lessonsResponse.ok) {
+        throw new Error(`Lessons API error: ${lessonsResponse.status}`);
+      }
+      
+      const lessonsData = await lessonsResponse.json();
+      const lessonsContainer = document.querySelector("#lessonsContainer");
+      lessonsContainer.innerHTML = lessonsData.map(item => `
+        <div class="bg-white p-4 rounded-2xl shadow hover:shadow-lg transition-shadow">
+          <h4 class="text-xl font-semibold mb-2 text-purple-700">${item.title}</h4>
+          <p class="text-gray-600">${item.description}</p>
+        </div>
+      `).join("");
+
+      // Load news
+      const newsResponse = await fetch(`${backendUrl}/api/news`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!newsResponse.ok) {
+        throw new Error(`News API error: ${newsResponse.status}`);
+      }
+      
+      const newsData = await newsResponse.json();
+      const newsContainer = document.querySelector("#newsContainer");
+      newsContainer.innerHTML = newsData.map(item => `
+        <li class="bg-purple-100 p-4 rounded-xl hover:bg-purple-200 transition-colors">
+          <strong class="text-purple-800">${item.title}</strong>
+          <p class="text-sm mt-1 text-gray-700">${item.summary}</p>
+        </li>
+      `).join("");
+    } catch (error) {
+      console.error('Error loading data:', error);
+      // Show error message to user
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative m-4';
+      errorDiv.innerHTML = `
+        <strong class="font-bold">خطا!</strong>
+        <span class="block sm:inline">در بارگذاری اطلاعات مشکلی پیش آمد. لطفا صفحه را رفرش کنید.</span>
+        <br>
+        <span class="text-sm">${error.message}</span>
+      `;
+      document.body.insertBefore(errorDiv, document.body.firstChild);
+    }
+  }
+
+  // Load data when page loads
+  document.addEventListener('DOMContentLoaded', loadData);
+</script>
+
+<body class="bg-purple-50 text-gray-800">
+
+  <!-- 🧠 Header -->
+  <header class="bg-purple-600 text-white p-4 shadow">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-2xl font-bold">آموزش هوش مصنوعی</h1>
+      <nav class="space-x-4 space-x-reverse">
+        <a href="#lessons" class="hover:underline">آموزش‌ها</a>
+        <a href="#news" class="hover:underline">اخبار</a>
+        <a href="#about" class="hover:underline">درباره ما</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- 👋 Hero -->
+  <section class="text-center py-12 bg-white">
+    <h2 class="text-4xl font-extrabold text-purple-700 mb-4">سلام بچه‌ها! 🤖</h2>
+    <p class="text-lg">بیایید با هم یاد بگیریم که هوش مصنوعی چیه و چطور کار می‌کنه!</p>
+  </section>
+
+  <!-- 📘 Lessons -->
+  <section id="lessons" class="container mx-auto py-10 px-4">
+    <h3 class="text-2xl font-bold text-purple-700 mb-6">آموزش‌های ما</h3>
+    <div id="lessonsContainer" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="text-center text-gray-500">در حال بارگذاری...</div>
+    </div>
+  </section>
+
+  <!-- 📰 News -->
+  <section id="news" class="bg-white py-10 px-4">
+    <div class="container mx-auto">
+      <h3 class="text-2xl font-bold text-purple-700 mb-6">اخبار و رویدادها</h3>
+      <ul id="newsContainer" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <li class="text-center text-gray-500">در حال بارگذاری...</li>
+      </ul>
+    </div>
+  </section>
+
+</body>
+</html>
+
