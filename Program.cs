@@ -37,8 +37,12 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// Serve static files
-app.UseStaticFiles();
+// Serve static files from wwwroot
+app.UseStaticFiles(new StaticFileOptions
+{
+    ServeUnknownFileTypes = true,
+    DefaultContentType = "text/plain"
+});
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
