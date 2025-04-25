@@ -23,6 +23,19 @@ if (string.IsNullOrEmpty(connectionString))
     throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 }
 
+// Convert Railway's connection string format to Npgsql format if needed
+if (connectionString.StartsWith("postgresql://"))
+{
+    var uri = new Uri(connectionString);
+    var username = uri.UserInfo.Split(':')[0];
+    var password = uri.UserInfo.Split(':')[1];
+    var host = uri.Host;
+    var port = uri.Port;
+    var database = uri.AbsolutePath.TrimStart('/');
+    
+    connectionString = $"Host={host};Port={port};Database={database};Username={username};Password={password};SSL Mode=Require;Trust Server Certificate=true";
+}
+
 // Add Entity Framework Core with PostgreSQL
 builder.Services.AddDbContext<AmooAI.Data.ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));

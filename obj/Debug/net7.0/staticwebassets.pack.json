@@ -1,0 +1,25 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\MyData\\Project\\amooai.ir\\wwwroot\\index.html",
+      "PackagePath": "staticwebassets\\index.html"
+    },
+    {
+      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.AmooAI.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.build.AmooAI.props",
+      "PackagePath": "build\\AmooAI.props"
+    },
+    {
+      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.buildMultiTargeting.AmooAI.props",
+      "PackagePath": "buildMultiTargeting\\AmooAI.props"
+    },
+    {
+      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.buildTransitive.AmooAI.props",
+      "PackagePath": "buildTransitive\\AmooAI.props"
+    }
+  ],
+  "ElementsToRemove": []
+}
