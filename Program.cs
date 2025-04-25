@@ -13,6 +13,17 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+// Get the connection string from environment variables
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+if (string.IsNullOrEmpty(connectionString))
+{
+    throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+}
+
+// Add Entity Framework Core with PostgreSQL
+builder.Services.AddDbContext<AmooAI.Data.ApplicationDbContext>(options =>
+    options.UseNpgsql(connectionString));
+
 // Add CORS with specific policy
 builder.Services.AddCors(options =>
 {

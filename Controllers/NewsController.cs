@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using AmooAI.Models;
+using AmooAI.Data;
 
 namespace AmooAI.Controllers
 {
@@ -7,50 +9,85 @@ namespace AmooAI.Controllers
     [Route("api/[controller]")]
     public class NewsController : ControllerBase
     {
-        [HttpGet]
-        public ActionResult<List<News>> Get()
-        {
-            var news = new List<News>
-            {
-                new News
-                {
-                    Id = 1,
-                    Title = "مسابقه هوش مصنوعی برای کودکان",
-                    Summary = "اولین مسابقه هوش مصنوعی ویژه کودکان در ایران برگزار می‌شود. این مسابقه برای کودکان 8 تا 12 سال طراحی شده است."
-                },
-                new News
-                {
-                    Id = 2,
-                    Title = "کارگاه آموزشی رایگان",
-                    Summary = "کارگاه آموزشی رایگان هوش مصنوعی برای کودکان 8 تا 12 سال در مراکز آموزشی سراسر کشور برگزار می‌شود."
-                },
-                new News
-                {
-                    Id = 3,
-                    Title = "کتاب جدید هوش مصنوعی",
-                    Summary = "انتشار کتاب جدید آموزش هوش مصنوعی برای کودکان با عنوان 'هوش مصنوعی برای کودکان'."
-                },
-                new News
-                {
-                    Id = 4,
-                    Title = "برگزاری نمایشگاه هوش مصنوعی",
-                    Summary = "نمایشگاه دستاوردهای هوش مصنوعی کودکان در تاریخ 15 خرداد در تهران برگزار می‌شود."
-                },
-                new News
-                {
-                    Id = 5,
-                    Title = "افتتاح مرکز آموزش هوش مصنوعی",
-                    Summary = "اولین مرکز تخصصی آموزش هوش مصنوعی برای کودکان در تهران افتتاح شد."
-                },
-                new News
-                {
-                    Id = 6,
-                    Title = "برنامه تلویزیونی هوش مصنوعی",
-                    Summary = "شبکه آموزش از هفته آینده برنامه جدیدی با موضوع آموزش هوش مصنوعی به کودکان پخش می‌کند."
-                }
-            };
+        private readonly ApplicationDbContext _context;
 
-            return Ok(news);
+        public NewsController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<News>>> Get()
+        {
+            return await _context.News.ToListAsync();
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<News>> Get(int id)
+        {
+            var news = await _context.News.FindAsync(id);
+            if (news == null)
+            {
+                return NotFound();
+            }
+            return news;
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<News>> Post(News news)
+        {
+            _context.News.Add(news);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction(nameof(Get), new { id = news.Id }, news);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, News news)
+        {
+            if (id != news.Id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(news).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!NewsExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var news = await _context.News.FindAsync(id);
+            if (news == null)
+            {
+                return NotFound();
+            }
+
+            _context.News.Remove(news);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        private bool NewsExists(int id)
+        {
+            return _context.News.Any(e => e.Id == id);
         }
     }
 } 

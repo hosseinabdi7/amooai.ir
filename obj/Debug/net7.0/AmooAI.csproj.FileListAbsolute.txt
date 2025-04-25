@@ -29,3 +29,4 @@ C:\MyData\Project\amooai.ir\obj\Debug\net7.0\refint\AmooAI.dll
 C:\MyData\Project\amooai.ir\obj\Debug\net7.0\AmooAI.pdb
 C:\MyData\Project\amooai.ir\obj\Debug\net7.0\AmooAI.genruntimeconfig.cache
 C:\MyData\Project\amooai.ir\obj\Debug\net7.0\ref\AmooAI.dll
+C:\MyData\Project\amooai.ir\obj\Debug\net7.0\AmooAI.sourcelink.json
