@@ -12,7 +12,7 @@ FROM build AS publish
 RUN dotnet publish "AmooAI.csproj" -c Release -o /app/publish
 
 # Final stage
-FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS final
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 COPY --from=build /src/entrypoint.sh .
