@@ -1,11 +1,39 @@
 {
   "Version": 1,
-  "Hash": "GWziqVDG4vQJsJziptDNXb6oyEtPoaH7GW4mofKZSKI=",
+  "Hash": "fhL0IDOxmmpA75mUOIf9V+VqbVDNQ1/I2EaBatAzJo4=",
   "Source": "AmooAI",
   "BasePath": "_content/AmooAI",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
-  "Assets": []
+  "DiscoveryPatterns": [
+    {
+      "Name": "AmooAI\\wwwroot",
+      "Source": "AmooAI",
+      "ContentRoot": "C:\\MyData\\Project\\amooai.ir\\wwwroot\\",
+      "BasePath": "_content/AmooAI",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "C:\\MyData\\Project\\amooai.ir\\wwwroot\\index.html",
+      "SourceId": "AmooAI",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\MyData\\Project\\amooai.ir\\wwwroot\\",
+      "BasePath": "_content/AmooAI",
+      "RelativePath": "index.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\index.html"
+    }
+  ]
 }

@@ -1,10 +1,8 @@
 #!/bin/bash
 
-# Install EF Core tools
-dotnet tool install --global dotnet-ef
-
-# Run database migrations
-echo "Running database migrations..."
+# Run database update
+echo "Updating database..."
+cd /app
 dotnet ef database update
 
 # Start the application

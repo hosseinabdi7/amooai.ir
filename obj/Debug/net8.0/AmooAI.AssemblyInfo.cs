@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AmooAI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+97e616a36816e6f716af8e1d3ed002d5d5f0e344")]
 [assembly: System.Reflection.AssemblyProductAttribute("AmooAI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AmooAI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

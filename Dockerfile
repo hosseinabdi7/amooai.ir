@@ -1,5 +1,5 @@
 # Build stage
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 COPY ["AmooAI.csproj", "./"]
 RUN dotnet restore "AmooAI.csproj"
@@ -12,11 +12,18 @@ FROM build AS publish
 RUN dotnet publish "AmooAI.csproj" -c Release -o /app/publish
 
 # Final stage
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS final
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+COPY --from=build /src/AmooAI.csproj .
+COPY --from=build /src/Migrations ./Migrations
 COPY --from=build /src/entrypoint.sh .
 RUN chmod +x ./entrypoint.sh
+
+# Install EF Core tools and required packages
+RUN dotnet tool install --global dotnet-ef
+RUN dotnet add package Microsoft.EntityFrameworkCore.Design
+ENV PATH="$PATH:/root/.dotnet/tools"
 
 # Create wwwroot directory and copy static files
 RUN mkdir -p /app/wwwroot

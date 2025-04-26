@@ -1,22 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Npgsql.EntityFrameworkCore.PostgreSQL;
+using Npgsql;
+using AmooAI.Data;
+using AmooAI.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
-    {
-        Title = "AmooAI API",
-        Version = "v1",
-        Description = "API for AmooAI educational platform"
-    });
-});
-
-// Get the connection string from environment variables
+// Get connection string from configuration
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 if (string.IsNullOrEmpty(connectionString))
 {
@@ -33,22 +23,36 @@ if (connectionString.StartsWith("postgresql://"))
     var port = uri.Port;
     var database = uri.AbsolutePath.TrimStart('/');
     
-    connectionString = $"Host={host};Port={port};Database={database};Username={username};Password={password};SSL Mode=Require;Trust Server Certificate=true";
+    connectionString = $"Server={host};Port={port};Database={database};User Id={username};Password={password};SSL Mode=Require;Trust Server Certificate=true";
+    
+    // Update the configuration with the converted connection string
+    builder.Configuration["ConnectionStrings:DefaultConnection"] = connectionString;
 }
 
-// Add Entity Framework Core with PostgreSQL
-builder.Services.AddDbContext<AmooAI.Data.ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString));
+// Add services to the container.
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
-// Add CORS with specific policy
+// Configure DbContext with the connection string
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+    options.UseNpgsql(connectionString, npgsqlOptions =>
+    {
+        npgsqlOptions.EnableRetryOnFailure();
+    });
+});
+
+// Add CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
+    options.AddPolicy("AllowAll",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
 });
 
 var app = builder.Build();
@@ -56,27 +60,28 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseDeveloperExceptionPage();
     app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "AmooAI API V1");
-    });
+    app.UseSwaggerUI();
 }
-
-// Serve static files from wwwroot
-app.UseStaticFiles(new StaticFileOptions
-{
-    ServeUnknownFileTypes = true,
-    DefaultContentType = "text/plain"
-});
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 app.UseAuthorization();
 app.MapControllers();
 
-// Fallback to index.html for SPA
-app.MapFallbackToFile("index.html");
+// Ensure database exists and apply migrations
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    try
+    {
+        db.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error applying migrations: {ex.Message}");
+        throw;
+    }
+}
 
 app.Run(); 
